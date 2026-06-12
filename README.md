@@ -583,7 +583,7 @@ subscription.cancel();
 
 **📧 邮件支持**
 
-support@example.com
+nanli0709@foxmail.com
 
 - 工作日 9:00-18:00
 - 24 小时内响应

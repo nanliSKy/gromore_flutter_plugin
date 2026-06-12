@@ -309,7 +309,7 @@ Add for:
 
 **📧 Email Support**
 
-support@example.com
+nanli0709@foxmail.com
 
 - Business days 9:00-18:00
 - 24-hour response
