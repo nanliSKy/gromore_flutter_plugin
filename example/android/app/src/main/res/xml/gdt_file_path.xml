@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="gdt_external_root"
+        path="." />
+    <external-path
+        name="gdt_external_download"
+        path="Download" />
+    <external-files-path
+        name="gdt_external_files"
+        path="." />
+    <external-cache-path
+        name="gdt_external_cache"
+        path="." />
+    <files-path
+        name="gdt_internal_file"
+        path="." />
+    <cache-path
+        name="gdt_internal_cache"
+        path="." />
+</paths>

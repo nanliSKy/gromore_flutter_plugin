@@ -1,0 +1,48 @@
+# ========================================
+# IntelliJ / Android Studio
+# ========================================
+*.iml
+*.ipr
+*.iws
+.idea/
+*.hprof
+
+# ========================================
+# Gradle
+# ========================================
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/caches
+/.idea/modules.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# ========================================
+# Build outputs
+# ========================================
+/build
+/captures
+.externalNativeBuild
+.cxx
+/out
+
+# ========================================
+# OS
+# ========================================
+.DS_Store
+Thumbs.db
+
+# ========================================
+# Signing files
+# ========================================
+*.jks
+*.keystore
+key.properties
+
+# ========================================
+# Generated files
+# ========================================
+**/GeneratedPluginRegistrant.java
+**/GeneratedPluginRegistrant.kt

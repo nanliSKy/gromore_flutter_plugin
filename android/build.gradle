@@ -1,0 +1,165 @@
+group = "com.example.gromore_flutter_plugin"
+version = "1.0-SNAPSHOT"
+
+buildscript {
+    ext.kotlin_version = "1.8.22"
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+    classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://artifact.bytedance.com/repository/AwemeOpenSDK" }
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+// -------------------------------------------------------------------------
+// 按 ADN 粒度启用/禁用开关（Req 11.4 / 11.5）
+//
+// 集成方可在 app 工程的 gradle.properties 中覆盖以下属性来按需裁剪 ADN，
+// 默认全部启用。被禁用的 ADN 不会将其 ADN SDK 与对应适配器 .aar 纳入构建产物，
+// 其余已启用 ADN 不受影响（Req 11.5）。
+//
+//   gromore.enableBaidu=false    # 禁用百度 ADN
+//   gromore.enableGdt=false      # 禁用优量汇 (GDT) ADN
+//   gromore.enableKs=false       # 禁用快手 (Kuaishou) ADN
+//   gromore.enableSigmob=false   # 禁用 Sigmob (windAd) ADN
+// -------------------------------------------------------------------------
+def boolProp = { String name, boolean defaultValue ->
+    def v = project.findProperty(name)
+    return (v == null) ? defaultValue : v.toString().toBoolean()
+}
+def enableBaidu = boolProp("gromore.enableBaidu", true)
+def enableGdt = boolProp("gromore.enableGdt", true)
+def enableKs = boolProp("gromore.enableKs", true)
+def enableSigmob = boolProp("gromore.enableSigmob", true)
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace = "com.example.gromore_flutter_plugin"
+    }
+
+    compileSdk = 34
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
+    }
+
+    defaultConfig {
+        // GroMore 核心 SDK 要求 minSdk 24（与官方 demo 一致）
+        minSdk = 24
+        multiDexEnabled = true
+    }
+
+    dependencies {
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.mockito:mockito-core:5.0.0")
+    }
+
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+
+            testLogging {
+               events "passed", "skipped", "failed", "standardOut", "standardError"
+               outputs.upToDateWhen {false}
+               showStandardStreams = true
+            }
+        }
+    }
+}
+
+// ========================================
+// 插件自身的仓库配置
+// ========================================
+// 说明：此处的 repositories 配置只对插件模块自己的编译有效。
+// 
+// 作用：
+// 1. 让插件模块能找到 libs/ 目录下的 .aar 文件进行编译
+// 2. 获取 GroMore SDK 的远程传递依赖
+//
+// 注意：
+// - 这些配置**不会**传递给使用方（示例应用）
+// - 使用方需要在自己的 build.gradle 中重新配置这些仓库
+// - 这是 Gradle 的设计机制，不是 bug 或配置错误
+//
+// 技术细节：
+// - flatDir 使用相对路径 "libs"，相对于当前模块目录（android/）
+// - 使用方配置 flatDir 时需要用 project(':plugin').file('libs')
+//
+repositories {
+    flatDir {
+        dirs "libs", "libs/adn", "libs/adapter"
+    }
+    google()
+    mavenCentral()
+    maven { url "https://artifact.bytedance.com/repository/AwemeOpenSDK" }
+}
+
+dependencies {
+    // ========================================
+    // GroMore 核心 SDK 与其传递依赖（Req 11.2）
+    // ========================================
+    // 使用 "implementation" 而非 "api" 的原因：
+    // 1. 更好的编译隔离：使用方修改不会触发插件重新编译
+    // 2. 更快的构建速度：只有插件自己的代码变化才重新编译
+    // 3. 更好的封装性：不暴露内部实现细节
+    // 4. 减少依赖冲突：使用方不会意外依赖相同的库
+    //
+    // 注意：使用 "implementation" 意味着使用方需要在自己的 build.gradle 
+    //      中配置仓库（flatDir 和 maven）以解析这些传递依赖
+    implementation(name: "open_ad_sdk", ext: "aar")
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.squareup.okhttp3:okhttp:3.12.1"
+    implementation "com.bytedance.ies.ugc.aweme:opensdk-china-external:0.1.8.0"
+    implementation "com.bytedance.ies.ugc.aweme:opensdk-common:0.1.8.0"
+
+    // ---- 百度 ADN（Req 11.4：默认启用，可通过 gromore.enableBaidu=false 禁用）----
+    if (enableBaidu) {
+        implementation(name: "Baidu_MobAds_SDK_v9.4503", ext: "aar")
+        implementation(name: "mediation_baidu_adapter_9.4503.0", ext: "aar")
+    }
+
+    // ---- 优量汇 GDT ADN（gromore.enableGdt=false 禁用）----
+    if (enableGdt) {
+        implementation(name: "GDTSDK.unionNormal.4.680.1550", ext: "aar")
+        implementation(name: "mediation_gdt_adapter_4.680.1550.0", ext: "aar")
+    }
+
+    // ---- 快手 KS ADN（gromore.enableKs=false 禁用）----
+    if (enableKs) {
+        implementation(name: "kssdk-ad-5.3.20.1", ext: "aar")
+        implementation(name: "mediation_ks_adapter_5.3.20.1.0", ext: "aar")
+    }
+
+    // ---- Sigmob (windAd) ADN（gromore.enableSigmob=false 禁用）----
+    if (enableSigmob) {
+        implementation(name: "windAd-4.25.14", ext: "aar")
+        implementation(name: "windAd-common-2.0.1", ext: "aar")
+        implementation(name: "mediation_sigmob_adapter_4.25.14.0", ext: "aar")
+    }
+}

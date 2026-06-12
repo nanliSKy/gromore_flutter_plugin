@@ -1,0 +1,57 @@
+// ========================================
+// GroMore Flutter Plugin - Example App
+// 项目级 Gradle 配置
+// ========================================
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        
+        // ========================================
+        // GroMore SDK 依赖的字节跳动仓库
+        // ========================================
+        // 用途：获取 com.bytedance.ies.ugc.aweme:opensdk-* 等传递依赖
+        // 必须性：必需（插件中虽已配置，但 allprojects 级别需要在此重新声明）
+        maven { url "https://artifact.bytedance.com/repository/AwemeOpenSDK" }
+        
+        // ========================================
+        // flatDir：支持插件的本地 AAR 文件
+        // ========================================
+        // 用途：让 Gradle 能找到插件 libs/ 目录下的 .aar 文件
+        // 必须性：必需
+        // 
+        // 原因说明：
+        // 1. 插件使用 "implementation" 依赖，不会自动传递仓库配置
+        // 2. 示例应用在编译时需要解析插件的所有传递依赖
+        // 3. 这些 .aar 文件不在 Maven 仓库中，只能通过 flatDir 访问
+        // 4. Gradle 在解析依赖图时需要在 "allprojects" 中能访问所有仓库
+        //
+        // 技术细节：
+        // - 即使插件的 build.gradle 中已配置 flatDir，那只对插件模块有效
+        // - 当示例应用依赖插件时，Gradle 需要在示例应用的仓库列表中也能找到这些 .aar
+        // - 如果不配置，会报错：Could not find open_ad_sdk.aar (project :gromore_flutter_plugin)
+        //
+        // 替代方案：
+        // - 将 .aar 发布到 Maven 本地仓库 (mavenLocal())
+        // - 将 .aar 发布到私有 Maven 仓库
+        // - 使用 "api" 替代 "implementation"（但这会暴露所有内部依赖）
+        flatDir {
+            dirs project(':gromore_flutter_plugin').file('libs'),
+                 project(':gromore_flutter_plugin').file('libs/adn'),
+                 project(':gromore_flutter_plugin').file('libs/adapter')
+        }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

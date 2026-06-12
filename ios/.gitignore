@@ -1,0 +1,72 @@
+# ========================================
+# Xcode
+# ========================================
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+xcuserdata
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+
+# ========================================
+# CocoaPods
+# ========================================
+Pods/
+Podfile.lock
+
+# ========================================
+# Carthage
+# ========================================
+Carthage/Build
+
+# ========================================
+# fastlane
+# ========================================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# ========================================
+# Build outputs
+# ========================================
+build/
+profile
+
+# ========================================
+# Generated files
+# ========================================
+GeneratedPluginRegistrant.h
+GeneratedPluginRegistrant.m
+GeneratedPluginRegistrant.swift
+.generated/
+/Flutter/Generated.xcconfig
+/Flutter/ephemeral/
+/Flutter/flutter_export_environment.sh
+
+# ========================================
+# IDEs
+# ========================================
+.idea/
+.vagrant/
+.vscode/
+
+# ========================================
+# OS
+# ========================================
+.DS_Store
+.svn/
+.sconsign.dblite
+*.swp
+*.pyc
+*sync/
+Icon?
+.tags*

@@ -1,0 +1,44 @@
+# ========================================
+# Gradle
+# ========================================
+gradle-wrapper.jar
+/.gradle
+/gradlew
+/gradlew.bat
+/local.properties
+.cxx
+
+# ========================================
+# Build outputs
+# ========================================
+/captures/
+/build/
+/app/build/
+
+# ========================================
+# IntelliJ / Android Studio
+# ========================================
+.idea/
+*.iml
+*.hprof
+
+# ========================================
+# Generated files
+# ========================================
+GeneratedPluginRegistrant.java
+GeneratedPluginRegistrant.kt
+
+# ========================================
+# Signing files
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+# ========================================
+key.properties
+**/*.keystore
+**/*.jks
+
+# ========================================
+# OS
+# ========================================
+.DS_Store
+Thumbs.db

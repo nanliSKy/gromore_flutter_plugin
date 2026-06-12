@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="sigmob_external_root"
+        path="." />
+    <external-path
+        name="sigmob_external_download"
+        path="Download" />
+    <external-files-path
+        name="sigmob_external_files"
+        path="." />
+    <external-cache-path
+        name="sigmob_external_cache"
+        path="." />
+    <files-path
+        name="sigmob_internal_file"
+        path="." />
+    <cache-path
+        name="sigmob_internal_cache"
+        path="." />
+</paths>
